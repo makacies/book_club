@@ -3,6 +3,30 @@ document.addEventListener("DOMContentLoaded", () => {
   const coversFolder = "covers";
   const coversCount = 35;
 
+  // Load ratings from JSON file
+  async function loadRatings() {
+    try {
+      const response = await fetch("ratings.json");
+      const ratings = await response.json();
+
+      // Update each rating in the table
+      const tableRows = document.querySelectorAll("tr[data-book-id]");
+      tableRows.forEach((row) => {
+        const bookId = row.getAttribute("data-book-id");
+        const ratingCell = row.querySelector(".rating");
+        if (
+          ratings[bookId] &&
+          ratings[bookId].rating !== undefined &&
+          ratingCell
+        ) {
+          ratingCell.textContent = ratings[bookId].rating;
+        }
+      });
+    } catch (error) {
+      console.error("Rating isn't loaded:", error);
+    }
+  }
+
   function debounce(func, wait) {
     let timeout;
     return function executedFunction(...args) {
@@ -66,4 +90,5 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("resize", debouncedLoadCovers);
 
   loadCovers();
+  loadRatings();
 });
